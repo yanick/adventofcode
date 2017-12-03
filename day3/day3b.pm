@@ -10,19 +10,16 @@ my $spiral = Array::Tour::Spiral->new( dimensions => $num );
 
 my $grid = [];
 my $first = 1;
+my $current = 0;
 
-while ( my ($x,$y) = $spiral->next->@* ) {
-    if( $first) {
-        $grid->[$x][$y] = 1;
-        $first = 0;
-    }
-    else {
-        $grid->[$x][$y] = sum map { 
-            my $i = $_;
-            map { $grid->[$x+$i][$y+$_] } -1..1
-        } -1..1
-    }
-
-    warn $grid->[$x][$y];
-    exit say $_ for grep { $_ > $num }  $grid->[$x][$y];
+until ( $current > $num ) {
+    my ($x,$y) = $spiral->next->@*;
+    $current = $grid->[$x][$y] = 
+        $first ? $first--
+               : sum map { 
+                    my $i = $_;
+                    map { $grid->[$x+$i][$y+$_] } -1..1
+                    } -1..1
 }
+
+say $current;
