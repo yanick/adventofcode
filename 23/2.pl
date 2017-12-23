@@ -1,5 +1,6 @@
 use 5.20.0;
 
+my $script = "\$a = 1;\n";
 while(<>) {
     s/\b[a-h]\b/\$$&/g;
     s/sub (\S+) (\S+)/$1 -= $2;/;
@@ -7,8 +8,16 @@ while(<>) {
     s/mul (\S+) (\S+)/$1 *= $2;/;
     s/jnz (\S+) (\S+)/"goto L" . ($. + $2) . " if $1;"/e;
     s/^/L${.}: /;
-    print;
+    $script .= $_;
 }
+
+for ( 1..35 ) {
+    my @c = $script =~ /(L$_: )/g;
+    next if @c > 1;
+    $script =~ s/L$_: //g;
+}
+
+print $script;
 
 __END__
 
