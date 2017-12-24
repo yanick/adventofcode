@@ -1,33 +1,16 @@
-$a = 1;
-$b = 79;
-$c = $b;
+($a,$b,$c) = (1,79,79);
 goto L5 if $a;
 goto L9 if 1;
 L5: $b *= 100;
 $b -= -100000;
-$c = $b;
-$c -= -17000;
-L9: $f = 1;
-$d = 2;
-L11: $e = 2;
-L12: $g = $d;
-$g *= $e;
-$g -= $b;
-goto L17 if $g;
-$f = 0;
-L17: $e -= -1;
-$g = $e;
-$g -= $b;
-goto L12 if $g;
-$d -= -1;
-$g = $d;
-$g -= $b;
-goto L11 if $g;
-goto L27 if $f;
-$h -= -1;
-L27: $g = $b;
-$g -= $c;
-goto L31 if $g;
-goto if 1;
-L31: $b -= -17;
-goto L9 if 1;
+while() {
+    warn $b;
+    ($f,$d) = (1,2);
+do {
+    $e = 2;
+    $f = 0 if not $b % $d;
+} while ++$d - $b;
+    $h++ unless $f;
+    die $h if $b == 124900;
+    $b += 17;
+}

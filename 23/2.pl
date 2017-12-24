@@ -12,9 +12,9 @@ while(<>) {
 }
 
 for ( 1..35 ) {
-    my @c = $script =~ /(L$_: )/g;
+    my @c = $script =~ /(L$_[ :])/g;
     next if @c > 1;
-    $script =~ s/L$_: //g;
+    $script =~ s/L$_[ :] *//g;
 }
 
 print $script;
