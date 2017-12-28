@@ -8,7 +8,8 @@ my $p = 0;
 use DDP;
 for(1..2017) {
     $p = ( 1 + $p + $i ) % @v;
-    splice @v, $p, 0, $_;
+    if($p) { splice @v, $p, 0, $_; }
+    else { push @v, $_; $p = $#v };
 }
 
 p @v;
