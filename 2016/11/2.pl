@@ -23,68 +23,45 @@ my %state = (
 
 sub freeze { to_json( { @_ }, { canonical => 1 } ) }
 
-my %history = (
-    0 => freeze(%state),
-);
-
 use DDP;
-p %history;
 
-my @next = ( [ 0, %state ] );
+my $max = 55;
 
-while( my $n = shift @next ) {
-    search( @$n );
-}
+search( 0, \%state, freeze(%state) );
+
+say $max;
 
 sub search {
-    my( $steps, %state ) = @_;
+    my( $steps, $state, @history ) = @_;
 
-    say "size: ", scalar @next;
-    say $steps;
-#    p $steps;
-#    p %state;
+#    say "steps: ", $steps;
 
-    if( all { $_ == 4 } values %state ) {
-        say "woohoo, found it: $steps";
-        die;
-    }
-
-    my $f = freeze(%state);
-
-    if( $history{$f}++ ) {
-        return say "seen it";
-    }
-
-    if( britzle(%state) ) {
-#        say "we fried something";
+    if( all { $_ == 4 } values %$state ) {
+        $max = min $max, $steps;
+        say "woohoo, found it: $steps, $max";
         return;
     }
 
+    return if $steps + 1 >= $max;
 
-    my $level = $state{E};
-    my @things = grep { $_ ne 'E' and $state{$_} == $level } keys %state;
+    my $level = $state->{E};
+    my @things = grep { $_ ne 'E' and $state->{$_} == $level } keys %$state;
 
-    for my $thing ( @things ) {
-        for my $next_level ( grep { $_ >= 1 and $_ <= 4 } $level + 1, $level - 1 ) {
-            push @next, [
-                $steps + 1,
-                %state,
-                E => $next_level,
-                $thing => $next_level,
-            ];
-        }
-    }
+    use Algorithm::Combinatorics qw(combinations);
 
-    if ( @things >=2 ) {
-        use Algorithm::Combinatorics qw(combinations);
-        my $combs = combinations( \@things, 2 );
+    $steps++;
+
+    for my $group (2,1) {
+        next if @things < $group;
+
+        my $combs = combinations( \@things, $group );
         while( my $c = $combs->next ) {
-            for my $next_level ( grep { $_ >= 1 and $_ <= 4 } $level + 1, $level - 1 ) {
-                push @next, [
-                    $steps + 1,
-                    %state,
-                    map { $_ => $next_level } 'E', @$c
-                ];
+            I: for my $next_level ( grep { $_ >= 1 and $_ <= 4 } $level + 1, $level - 1 ) {
+                my %new_state = ( %$state, map { $_ => $next_level } 'E', @$c );
+                my $f = freeze(%new_state);
+                if ( any { $_ eq $f  }  @history ) {  next I };
+                if ( britzle(%new_state) ) {  next I; };
+                search( $steps, \%new_state, $f, @history )
             }
         }
     }
