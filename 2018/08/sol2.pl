@@ -9,10 +9,8 @@ use lib './lib';
 
 use Entry;
 
-use List::AllUtils qw/ sum /;
-
 my @input = split / /, <>;
 
 my $entry = Entry->new( stream => \@input );
 
-say sum $entry->all_data;
+say $entry->value;
