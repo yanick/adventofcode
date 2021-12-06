@@ -1,0 +1,9 @@
+[submodule "friends/bowser/2021"]
+	path = friends/bowser/2021
+	url = git@github.com:jgbowser/Advent-of-Code_2021.git
+[submodule "friends/jay"]
+	path = friends/jay
+	url = git@github.com:jhannah/adventofcode.git
+[submodule "friends/eric"]
+	path = friends/eric
+	url = git@github.com:ewagoner/adventofcode2021.git
