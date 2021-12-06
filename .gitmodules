@@ -7,3 +7,6 @@
 [submodule "friends/eric"]
 	path = friends/eric
 	url = git@github.com:ewagoner/adventofcode2021.git
+[submodule "friends/waltman/2021"]
+	path = friends/waltman/2021
+	url = git@github.com:waltman/advent-of-code-2021.git
