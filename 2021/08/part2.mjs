@@ -1,4 +1,3 @@
-import fs from "fs-extra";
 import fp from "lodash/fp.js";
 import _ from "lodash";
 
@@ -6,22 +5,17 @@ import * as p1 from "./part1.mjs";
 
 function decodedDigits(mapping) {
     const s = fp.invert(mapping);
-    let solution = fp.invert(p1.digits);
-    solution = fp.mapKeys(
-        (k) =>
+
+    return _.flow([
+        fp.invert,
+        fp.mapKeys((k) =>
             k
                 .split("")
                 .map((l) => s[l])
-                .join(""),
-        solution
-    );
-
-    solution = fp.mapKeys((k) => {
-        k = k.split("").sort().join("");
-        return k;
-    }, solution);
-
-    return solution;
+                .join("")
+        ),
+        fp.mapKeys((k) => k.split("").sort().join("")),
+    ])(p1.digits);
 }
 
 function guess(unknowns, guessed = {}, inputs) {
@@ -29,13 +23,11 @@ function guess(unknowns, guessed = {}, inputs) {
 
     if (!next) return guessed;
 
-    if (unknowns[next].size === 0) return;
-
-    for (const p of unknowns[next].values()) {
-        let newUnknowns = fp.omit(next, unknowns);
-        newUnknowns = fp.mapValues((s) => {
-            return s.filter( x => x !== p )
-        }, newUnknowns);
+    for (const p of unknowns[next]) {
+        let newUnknowns = fp.mapValues(
+            (s) => s.filter((x) => x !== p),
+            fp.omit(next, unknowns)
+        );
 
         if (Object.values(newUnknowns).some((s) => s.size === 0)) continue;
 
@@ -53,9 +45,7 @@ function guess(unknowns, guessed = {}, inputs) {
 export function findMapping(input) {
     const values = "abcdefg".split("");
 
-    let possibility = Object.fromEntries(
-        values.map((v) => [v, [ ...values ]])
-    );
+    let possibility = Object.fromEntries(values.map((v) => [v, values]));
 
     for (const seq of input) {
         const p = Object.values(p1.digits)
@@ -64,15 +54,16 @@ export function findMapping(input) {
             .split("");
 
         for (const l of seq) {
-            possibility[l] = _.intersection( possibility[l], p);
+            possibility[l] = _.intersection(possibility[l], p);
         }
     }
 
+    // feel cute, might delete later
     const one = input.find((i) => i.length === 2);
     const seven = input.find((i) => i.length === 3);
     const [a] = seven.filter((x) => !one.includes(x));
 
-    possibility = fp.mapValues(  fp.reject('a'), possibility);
+    possibility = fp.mapValues(fp.reject("a"), possibility);
 
     possibility[a] = ["a"];
 
