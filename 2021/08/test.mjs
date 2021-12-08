@@ -12,7 +12,7 @@ const input = fs.readFile("input", "utf8").then(p1.processInput);
 
 tap.test("part1", async (t) => {
     t.equal(p1.solution(await sample), 26);
-    t.equal(p1.solution(await input), 26);
+    t.equal(p1.solution(await input), 375);
 });
 
 tap.test("part2", async (t) => {
