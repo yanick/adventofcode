@@ -34,30 +34,27 @@ function guess(unknowns, guessed = {}, inputs) {
     for (const p of unknowns[next].values()) {
         let newUnknowns = fp.omit(next, unknowns);
         newUnknowns = fp.mapValues((s) => {
-            const x = new Set(s.values());
-            x.delete(p);
-            return x;
+            return s.filter( x => x !== p )
         }, newUnknowns);
 
         if (Object.values(newUnknowns).some((s) => s.size === 0)) continue;
 
         const r = guess(newUnknowns, { ...guessed, [next]: p }, inputs);
 
-        if (r) {
-            const solution = decodedDigits(r);
+        if (!r) continue;
 
-            if (inputs.every((i) => solution.hasOwnProperty(i.join("")))) {
-                return r;
-            }
-        }
+        const solution = decodedDigits(r);
+
+        if (inputs.every((i) => solution.hasOwnProperty(i.join(""))))
+            return r;
     }
 }
 
 export function findMapping(input) {
     const values = "abcdefg".split("");
 
-    const possibility = Object.fromEntries(
-        values.map((v) => [v, new Set(values)])
+    let possibility = Object.fromEntries(
+        values.map((v) => [v, [ ...values ]])
     );
 
     for (const seq of input) {
@@ -67,7 +64,7 @@ export function findMapping(input) {
             .split("");
 
         for (const l of seq) {
-            possibility[l] = new Set(p.filter((x) => possibility[l].has(x)));
+            possibility[l] = _.intersection( possibility[l], p);
         }
     }
 
@@ -75,11 +72,9 @@ export function findMapping(input) {
     const seven = input.find((i) => i.length === 3);
     const [a] = seven.filter((x) => !one.includes(x));
 
-    for (const l of Object.values(possibility)) {
-        l.delete("a");
-    }
+    possibility = fp.mapValues(  fp.reject('a'), possibility);
 
-    possibility[a] = new Set(["a"]);
+    possibility[a] = ["a"];
 
     return guess(possibility, {}, input);
 }
