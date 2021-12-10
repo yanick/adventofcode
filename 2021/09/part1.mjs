@@ -17,7 +17,7 @@ export const genNeighbours = (maxX,maxY) => (x,y) =>
         return true;
     } );
 
-const genCoords = grid => ([x,y]) => grid[x][y];
+export const genCoords = grid => ([x,y]) => grid[x][y];
 
 export function solution(grid) {
     const seen = grid.map( () => [] );

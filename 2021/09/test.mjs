@@ -18,6 +18,6 @@ tap.test("part1", async (t) => {
 });
 
 tap.test("part2", async (t) => {
-    /* t.equal(p2.solution(await sample, 256), 26984457539); */
-    /* t.equal(p2.solution(await input, 256), 1622533344325); */
+    t.equal(p2.solution(await sample), 1134);
+    t.equal(p2.solution(await input), 1100682);
 });
