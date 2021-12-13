@@ -15,8 +15,7 @@ export const processInput = (input) =>
       grid[x][y] = true;
     }
 
-    grid = [...grid];
-    grid = grid.map((x) => (x ? [...x] : []));
+    grid = [...grid].map((x) => (x ? [...x] : []));
 
     instructions = instructions
       .split("\n")
